@@ -1,0 +1,33 @@
+{
+  "name": "github-backup-automation",
+  "version": "1.0.0",
+  "description": "A simple Node.js application to backup GitHub repositories",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/index",
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xela-engineer/github-backup-automation.git"
+  },
+  "keywords": [],
+  "author": "xela-engineer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xela-engineer/github-backup-automation/issues"
+  },
+  "homepage": "https://github.com/xela-engineer/github-backup-automation#readme",
+  "dependencies": {
+    "simple-git": "^3.24.0",
+    "axios": "^1.6.8"
+  },
+  "devDependencies": {
+    "get-port": "^5.1.1",
+    "nock": "^13.0.4",
+    "tape": "^5.0.1"
+  }
+}
