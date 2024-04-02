@@ -24,6 +24,17 @@ class GithubController {
       console.error("No github account name found in the environment variable GITHUB_ACCOUNT_NAME");
       process.exit(1);
     }
+    // check if the backup path is valid
+    if (!this.backupPath) {
+      console.error("No backup path found in the environment variable BACKUP_PATH");
+      process.exit(1);
+    }
+    // check if the backup path is a directory
+    if (!fs.existsSync(this.backupPath)) {
+      console.error("The backup path is not a directory");
+      process.exit(1);
+    }
+    
   }
 
   // function: get the list of repos from github on a specific account
