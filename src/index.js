@@ -19,6 +19,7 @@ gh.getRepoNames() // Get the list of repos from the github api
   // for each folder, check if it is a git repo, if yes run git pull and get all branches and tags from github
   pullList = gh.repos.filter(repo => folders.includes(repo.name));
   console.log(pullList);
+  // TODO: implement the pullRepos function
   //gh.pullRepos(pullList);
 
 }).then(() => {
