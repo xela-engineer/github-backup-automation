@@ -9,7 +9,23 @@ class GithubController {
     this.accountName = accountName;
     //get the token from the environment variable
     this.token = process.env.GITHUB_PAT;
+    this.repos = [];
+    this.backupPath = process.env.BACKUP_PATH;
   }
+
+  verification() {
+    // check if the token is valid
+    if (!this.token) {
+      console.error("No github token found in the environment variable GITHUB_PAT");
+      process.exit(1);
+    }
+    // check if the account name is valid
+    if (!this.accountName) {
+      console.error("No github account name found in the environment variable GITHUB_ACCOUNT_NAME");
+      process.exit(1);
+    }
+  }
+
   // function: get the list of repos from github on a specific account
   async getRepoNames() {
     try {
@@ -20,15 +36,15 @@ class GithubController {
         "X-GitHub-Api-Version": "2022-11-28",
         "Accept": "application/vnd.github+json"
       };
-      axios.get( `https://api.github.com/users/${this.accountName}/repos`, { headers })
-        .then(response => {
-          this.repos = response.data.filter(repo => repo.owner.login === this.accountName);
-          console.log(response.data);
-          //return repos;
-        })
-        .catch(error => {
-          console.error(error);
-      });
+      await axios.get( `https://api.github.com/users/${this.accountName}/repos`, { headers })
+              .then(response => {
+                this.repos = response.data.filter(repo => repo.owner.login === this.accountName);
+                console.log(response.data);
+                //return repos;
+              })
+              .catch(error => {
+                console.error(error);
+            });
       
     } catch (error) {
       console.error(error);
@@ -46,7 +62,7 @@ class GithubController {
       };
       const git = simpleGit(options);
       this.repos.forEach(repo => {
-        git.clone(repo.clone_url, `/root/repos-backup/${repo.name}`, (err, data) => {
+        git.clone(repo.clone_url, `${this.backupPath}${repo.name}`, (err, data) => {
           if (err) {
             console.error(err);
             return;
