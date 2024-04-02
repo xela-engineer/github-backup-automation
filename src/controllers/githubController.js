@@ -34,7 +34,7 @@ class GithubController {
       console.error("The backup path is not a directory");
       process.exit(1);
     }
-    
+
   }
 
   // function: get the list of repos from github on a specific account
@@ -63,7 +63,7 @@ class GithubController {
   }
 
   // function: clone repos from github
-  async cloneRepos() {
+  async cloneRepos(cloneList) {
     try {
       //clone the repos
       const options = {
@@ -72,7 +72,7 @@ class GithubController {
         trimmed: false,
       };
       const git = simpleGit(options);
-      this.repos.forEach(repo => {
+      cloneList.forEach(repo => {
         git.clone(repo.clone_url, `${this.backupPath}${repo.name}`, (err, data) => {
           if (err) {
             console.error(err);
