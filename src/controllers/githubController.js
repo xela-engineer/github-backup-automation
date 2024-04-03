@@ -97,17 +97,17 @@ class GithubController {
         maxConcurrentProcesses: 6,
         trimmed: false,
       };
+      // TODO: git branch -r | grep -v '\->' | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
       const git = simpleGit(options);
-      cloneList.forEach(repo => {
-        git.pull()
+      
+      
+      pullList.forEach(async (repo) => {
+        // asign value to repos, if name is repo.name in the array of this.repos
+        const index = this.repos.findIndex( x => x.name === repo.name);
 
-        git.clone(repo.clone_url, `${this.backupPath}${repo.name}`, (err, data) => {
-          if (err) {
-            console.error(err);
-            return;
-          }
-          console.log(data);
-        });
+        const data = await simpleGit(`${this.backupPath}${repo.name}`).branch(['-r']);
+        this.repos[index].branches = data.all;
+        console.log(result);
       });
     } catch (error) {
       console.error(error);
