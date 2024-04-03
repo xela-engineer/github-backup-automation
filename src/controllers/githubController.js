@@ -47,7 +47,8 @@ class GithubController {
         "X-GitHub-Api-Version": "2022-11-28",
         "Accept": "application/vnd.github+json"
       };
-      await axios.get( `https://api.github.com/users/${this.accountName}/repos`, { headers })
+      // TODO: add loop
+      await axios.get( `https://api.github.com/user/repos?page=2`, { headers })
               .then(response => {
                 this.repos = response.data.filter(repo => repo.owner.login === this.accountName);
                 console.log(response.data);
@@ -73,8 +74,8 @@ class GithubController {
         '--mirror': 'true'
       };
       const git = simpleGit(options);
-      cloneList.forEach(repo => {
-        git.clone(repo.clone_url, `${this.backupPath}${repo.name}`, (err, data) => {
+      cloneList.forEach(async repo => {
+        await git.clone(repo.clone_url, `${this.backupPath}${repo.name}`, (err, data) => {
           if (err) {
             console.error(err);
             return;
