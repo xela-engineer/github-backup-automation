@@ -70,6 +70,7 @@ class GithubController {
         binary: 'git',
         maxConcurrentProcesses: 6,
         trimmed: false,
+        '--mirror': 'true'
       };
       const git = simpleGit(options);
       cloneList.forEach(repo => {
@@ -86,6 +87,32 @@ class GithubController {
     }
   }
 
+
+  // function: pull repos from github
+  async pullRepos(pullList) {
+    try {
+      //clone the repos
+      const options = {
+        binary: 'git',
+        maxConcurrentProcesses: 6,
+        trimmed: false,
+      };
+      const git = simpleGit(options);
+      cloneList.forEach(repo => {
+        git.pull()
+
+        git.clone(repo.clone_url, `${this.backupPath}${repo.name}`, (err, data) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          console.log(data);
+        });
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 module.exports = GithubController;
