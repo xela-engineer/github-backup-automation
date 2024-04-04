@@ -84,7 +84,9 @@ class GithubController {
       const git = simpleGit(options);
       
       cloneList.forEach(async repo => {
-        await git.clone(repo.clone_url, `${this.backupPath}${repo.owner.login}/${repo.name}`, (err, data) => {
+        // add login cred to github url
+        const remote = `https://${this.accountName}:${this.token}@${repo.clone_url}`;
+        await git.clone(remote, `${this.backupPath}${repo.owner.login}/${repo.name}`, (err, data) => {
           if (err) {
             console.error(err);
             return;
