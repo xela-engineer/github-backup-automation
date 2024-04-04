@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { error } = require('console')
+const { error, group } = require('console')
 const simpleGit = require('simple-git');
 const axios = require('axios');
 
@@ -10,6 +10,7 @@ class GithubController {
     //get the token from the environment variable
     this.token = process.env.GITHUB_PAT;
     this.repos = [];
+    this.groups = [];
     this.backupPath = process.env.BACKUP_PATH;
   }
 
@@ -47,7 +48,6 @@ class GithubController {
         "X-GitHub-Api-Version": "2022-11-28",
         "Accept": "application/vnd.github+json"
       };
-      // TODO: add loop
       let page = 1;
       while (true) {
         const res = await axios.get( `https://api.github.com/user/repos?page=${page}`, { headers });
@@ -59,9 +59,12 @@ class GithubController {
         if (res == undefined || res.data.length == 0){
           break;
         }
-        this.repos.push(res.data);
+        this.repos = this.repos.concat(res.data);
         page++;
       }
+      // get the list of groups
+      this.groups = this.repos.map(repo => repo.owner.login);
+      this.groups = [...new Set(this.groups)];
     } catch (error) {
       console.error(error);
     }
@@ -70,6 +73,7 @@ class GithubController {
   // function: clone repos from github
   async cloneRepos(cloneList) {
     try {
+      console.log("Cloning all Repos...");
       //clone the repos
       const options = {
         binary: 'git',
@@ -78,15 +82,18 @@ class GithubController {
         '--mirror': 'true'
       };
       const git = simpleGit(options);
+      
       cloneList.forEach(async repo => {
-        await git.clone(repo.clone_url, `${this.backupPath}${repo.name}`, (err, data) => {
+        await git.clone(repo.clone_url, `${this.backupPath}${repo.owner.login}/${repo.name}`, (err, data) => {
           if (err) {
             console.error(err);
             return;
           }
-          console.log(data);
+          //console.log(data);
         });
       });
+      
+      console.log("Cloned all Repos.");
     } catch (error) {
       console.error(error);
     }
@@ -96,6 +103,7 @@ class GithubController {
   // function: pull repos from github
   async pullRepos(pullList) {
     try {
+      console.log("Pulling all Repos...");
       //clone the repos
       const options = {
         binary: 'git',
@@ -105,15 +113,17 @@ class GithubController {
       // TODO: git branch -r | grep -v '\->' | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
       const git = simpleGit(options);
       
-      
       pullList.forEach(async (repo) => {
         // asign value to repos, if name is repo.name in the array of this.repos
         const index = this.repos.findIndex( x => x.name === repo.name);
 
-        const data = await simpleGit(`${this.backupPath}${repo.name}`).branch(['-r']);
+        const data = await simpleGit(`${this.backupPath}${repo.owner.login}/${repo.name}`).branch(['-r']);
         this.repos[index].branches = data.all;
         console.log(result);
       });
+      
+      
+      console.log("Pulled all Repos.");
     } catch (error) {
       console.error(error);
     }
