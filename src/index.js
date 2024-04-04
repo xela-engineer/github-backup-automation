@@ -38,6 +38,8 @@ gh.getRepoNames() // Get the list of repos from the github api
   cloneList = gh.repos.filter(repo => !pullList.includes(repo));
   console.log("cloneList: " + cloneList.map(repo => repo.full_name));
   gh.cloneRepos(cloneList);
+
+  //TODO: git fetch + pull
   let end = new Date();
   const duration = (end - now)/1000;
   console.log("GitHub repositories backed up successfully. Duration: " + duration + " seconds");
