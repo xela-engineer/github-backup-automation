@@ -3,8 +3,7 @@ const githubController = require('./controllers/githubController');
 const appCtr = require('./controllers/appController');
 // init program
 const gh = new githubController(process.env.GITHUB_ACCOUNT_NAME);
-let folders = [];
-let pullList = [];
+let clonedList = [];
 console.log("GitHub repositories start to back up ...");
 let now = new Date();
 
@@ -19,27 +18,26 @@ gh.getRepoNames() // Get the list of repos from the github api
   }
 
 }).then(() => {
-  // for each folder, check if it is a git repo, if yes run git pull and get all branches and tags from github
   
+  // Find out which repos are already cloned
   for (owner of gh.groups) {
     const folder=owner;
     const ownerRepos = gh.repos.filter(repo => repo.owner.login === owner);
     // go to the backup path and get the list of all folders
     const folders = appCtr.getAllFolders(gh.backupPath + folder + '/' );
-    pullList = pullList.concat(ownerRepos.filter(repo => folders.includes(repo.name)));
+    clonedList = clonedList.concat(ownerRepos.filter(repo => folders.includes(repo.name)));
   }
-  
-  console.log("pullList: " + pullList.map(repo => repo.full_name));
-  // TODO: implement the pullRepos function
-  gh.pullRepos(pullList);
-
+  console.log("clonedList: " + clonedList.map(repo => repo.full_name));
 }).then(() => {
   // Compare the folder list and repolist, if there is and repo not in the folder list, clone it
-  cloneList = gh.repos.filter(repo => !pullList.includes(repo));
+  cloneList = gh.repos.filter(repo => !clonedList.includes(repo));
   console.log("cloneList: " + cloneList.map(repo => repo.full_name));
   gh.cloneRepos(cloneList);
+  
+}).then(() => {
+  // TODO: implement the pullRepos function (run git pull and get all branches and tags from github)
+  gh.pullRepos();
 
-  //TODO: git fetch + pull
   let end = new Date();
   const duration = (end - now)/1000;
   console.log("GitHub repositories backed up successfully. Duration: " + duration + " seconds");

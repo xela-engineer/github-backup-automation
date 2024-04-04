@@ -104,6 +104,7 @@ class GithubController {
 
 
   // function: pull repos from github
+  //TODO: change from run pull with pullList to run pull with all repos
   async pullRepos(pullList) {
     try {
       console.log("Pulling all Repos...");
