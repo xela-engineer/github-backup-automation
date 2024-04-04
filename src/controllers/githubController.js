@@ -48,16 +48,20 @@ class GithubController {
         "Accept": "application/vnd.github+json"
       };
       // TODO: add loop
-      await axios.get( `https://api.github.com/user/repos?page=2`, { headers })
-              .then(response => {
-                this.repos = response.data.filter(repo => repo.owner.login === this.accountName);
-                console.log(response.data);
-                //return repos;
-              })
-              .catch(error => {
-                console.error(error);
-            });
-      
+      let page = 1;
+      while (true) {
+        const res = await axios.get( `https://api.github.com/user/repos?page=${page}`, { headers });
+        if (res.status != 200){
+          console.error("github api return error code: " + res.status);
+          break;
+        }
+
+        if (res == undefined || res.data.length == 0){
+          break;
+        }
+        this.repos.push(res.data);
+        page++;
+      }
     } catch (error) {
       console.error(error);
     }
