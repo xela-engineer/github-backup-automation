@@ -115,6 +115,7 @@ class GithubController {
         trimmed: false,
       };
       // TODO: git branch -r | grep -v '\->' | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+      // Ref: https://stackoverflow.com/questions/10312521/how-do-i-fetch-all-git-branches
       const git = simpleGit(options);
       
       pullList.forEach(async (repo) => {
