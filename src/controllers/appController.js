@@ -13,4 +13,15 @@ function getAllFolders(backupPath) {
   }
 }
 
-module.exports = {getAllFolders}
+function createFolder(path) {
+  try {
+    if (!fs.existsSync(path)) {
+      fs.mkdirSync(path);
+    }
+    
+  } catch (error) {
+    console.error(`Error occurred while retrieving folders: ${error}`);  
+  }
+}
+
+module.exports = {getAllFolders, createFolder}
