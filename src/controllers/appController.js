@@ -14,6 +14,7 @@ function getAllFolders(backupPath) {
 }
 
 function createFolder(path) {
+  console.log(`[appController.js] creating sub folders: ${path}`);
   try {
     if (!fs.existsSync(path)) {
       fs.mkdirSync(path);

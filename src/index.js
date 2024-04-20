@@ -11,14 +11,14 @@ gh.verification(); // check if the token and account name are valid
 
 gh.getRepoNames() // Get the list of repos from the github api
 .then(() => { 
-  
+  console.log("[index.js] Start create sub folders");
   // create sub folders for each group
   for (folder of gh.groups) {
     appCtr.createFolder(gh.backupPath + "/" + folder);
   }
-
+  console.log("[index.js] Completed create sub folders");
 }).then(() => {
-  
+  console.log("[index.js] Start Find out which repos are already cloned");
   // Find out which repos are already cloned
   for (owner of gh.groups) {
     const folder=owner;
@@ -28,6 +28,7 @@ gh.getRepoNames() // Get the list of repos from the github api
     clonedList = clonedList.concat(ownerRepos.filter(repo => folders.includes(repo.name)));
   }
   console.log("clonedList: " + clonedList.map(repo => repo.full_name));
+  console.log("[index.js] Completed Find out which repos are already cloned");
 }).then(() => {
   // Compare the folder list and repolist, if there is and repo not in the folder list, clone it
   cloneList = gh.repos.filter(repo => !clonedList.includes(repo));
